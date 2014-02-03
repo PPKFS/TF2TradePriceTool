@@ -109,7 +109,7 @@ namespace PricerThing
         {
             get
             {
-                return Template.Name;
+                return Template.Name+ ((this.CraftNumber <= 100 && this.CraftNumber != 0) ?  " #"+this.CraftNumber : "");
             }
         }
 
@@ -179,14 +179,7 @@ namespace PricerThing
         {
             Item a = this;
             Item other = (Item)obj;
-            if (a.Name == "Homewrecker" && other.Name == "Homewrecker")
-            {
-                var a2 = a.StrangeParts.OrderBy(t => t);
-                var a3 = other.StrangeParts.OrderBy(t => t);
-                bool huh = a2.SequenceEqual(a3);
-                //System.Diagnostics.Debugger.Break();
-            }
-            if (a.DefIndex != other.DefIndex || a.Quality != other.Quality || a.ContainedItem != other.ContainedItem)
+            if (a.DefIndex != other.DefIndex || a.Quality != other.Quality || a.ContainedItem != other.ContainedItem || a.IsTradable != other.IsTradable)
                 return false;
             else if (a.PaintDefID != other.PaintDefID && a.Quality != Quality.Unusual) //or if they are painted differently (except unusuals, then we don't care)
                 return false;
@@ -197,6 +190,8 @@ namespace PricerThing
             else if (a.Quality == Quality.Vintage && a.Type == ItemType.Weapon && a.Level != other.Level) //odd-levelled vintages
                 return false;
             else if (a.Quality == Quality.Strange && !Enumerable.SequenceEqual(a.StrangeParts.OrderBy(t => t), other.StrangeParts.OrderBy(t => t))) //diff parts
+                return false;
+            else if (a.Type == ItemType.Tool && a.Quantity != other.Quantity) //dueling games, noisemakers
                 return false;
             else
                 return true; //they're basically the same

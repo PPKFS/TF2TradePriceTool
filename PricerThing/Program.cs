@@ -77,28 +77,33 @@ namespace PricerThing
             //Strange Hats ???
             //Genuine
             //Vintages
+            //craft numbers
             //Unique Hats
             //Strange Weapons
             //Genuine Weapons
             //Vintage Weapons
             //Unique Weapons
+            //tools
+            //TODO: wrapped items
 
             var hats = items.Where(x => x.Type == ItemType.Hat);
             var weapons = items.Where(x => x.Type == ItemType.Weapon);
-            var tools = items.Where(x => x.Type == ItemType.Tool);
+            var tools = items.Where(x => x.Type == ItemType.Tool).OrderBy(x => x.Name).ThenBy(x => x.Quantity);
 
             //unusuals
             //Console.WriteLine(items.Count().ToString() + " " + (hats.Count() + weapons.Count() + tools.Count()).ToString());
             var unusuals = hats.Where(x => x.Quality == Quality.Unusual).OrderBy(x => x.Name).ThenBy(x => x.Effect);
             var genHats = hats.Where(x => x.Quality == Quality.Genuine);
             var vinHats = hats.Where(x => x.Quality == Quality.Vintage);
-            var uniqueHats = hats.Where(x => x.Quality == Quality.Unique);
+            var craftNos = items.Where(x => x.CraftNumber <= 100 && x.CraftNumber != 0);
+            var uniqueHats = hats.Where(x => x.Quality == Quality.Unique && !craftNos.Contains(x));
 
             //now for weapons
             var strangeWeps = weapons.Where(x => x.Quality == Quality.Strange);
             var genWeps = weapons.Where(x => x.Quality == Quality.Genuine);
-            var uniqueWeps = weapons.Where(x => x.Quality == Quality.Unique || x.Quality == Quality.Unusual);
+            var uniqueWeps = weapons.Where(x => (x.Quality == Quality.Unique || x.Quality == Quality.Unusual) && !craftNos.Contains(x));
             var vinWeps = weapons.Where(x => x.Quality == Quality.Vintage);
+
             using(StreamWriter w = new StreamWriter(DateTime.Now.Day.ToString() +"-"+ DateTime.Now.Month.ToString()+".txt"))
             {
                 if (unusuals.Count() != 0)
@@ -107,6 +112,8 @@ namespace PricerThing
                     PrintGenuineHats(genHats);
                 if (vinHats.Count() != 0)
                     PrintVintageHats(vinHats);
+                if (craftNos.Count() != 0)
+                    PrintCraftNumbers(craftNos);
                 if (uniqueHats.Count() != 0)
                     PrintUniqueHats(uniqueHats);
                 Console.WriteLine("---");
@@ -119,14 +126,39 @@ namespace PricerThing
                     PrintVintageWeps(vinWeps);
                 if (uniqueWeps.Count() != 0)
                     PrintUniqueWeps(uniqueWeps);
+                if (tools.Count() != 0)
+                    PrintTools(tools);
+            }
+        }
 
-                //now for genuines
-                
+        private static void PrintCraftNumbers(IEnumerable<Item> craftNos)
+        {
+            Console.WriteLine("\n\n **Craft # Stuff**  \n");
+            String lastLine = "";
+            foreach (Item u in craftNos)
+            {
+                String currLine;
+                List<string> attribs = GetAttributesForItem(u);
+                currLine = FormatItem(u, false, attribs.ToArray());
+                if (currLine != lastLine)
+                    Console.WriteLine(currLine);
+                lastLine = currLine;
+            }
+        }
 
-                
-
-                Console.WriteLine("\n\n---\n\n **Strange Hats**  ");
-
+        private static void PrintTools(IEnumerable<Item> tools)
+        {
+            Console.WriteLine("\n\n **Tools and Stuff**  \n");
+            String lastLine = "";
+            foreach (Item u in tools)
+            {
+                List<string> attribs = GetAttributesForItem(u);
+                if (u.Name.Contains("Noise Maker") && !u.Name.Contains("Holiday") || u.Name.Contains("Dueling")) 
+                    attribs.Add(String.Format("{0} uses", u.Quantity));
+                String currLine = FormatItem(u, false, attribs.ToArray());
+                if (currLine != lastLine)
+                    Console.WriteLine(currLine);
+                lastLine = currLine;
             }
         }
 
