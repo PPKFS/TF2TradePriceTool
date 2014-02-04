@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SteamKit2;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.IO;
 
 namespace PricerThing
@@ -63,13 +64,27 @@ namespace PricerThing
                 else
                     countedBP[i] = 1;
             }
+
+            dynamic priceJSON;
+            //now we can read in the values for the items
+            using (StreamReader priceReader = new StreamReader("bptf.txt"))
+            {
+                priceJSON = JsonConvert.DeserializeObject(priceReader.ReadToEnd());
+                priceJSON = priceJSON.response.prices;
+            }
+
+            foreach (var itemEntry in priceJSON)
+            {
+                itemEntry.AfterSelf();
+            }
+
             //now the keys are items, and the values are the counts
             //countedBP = sortedbp.GroupBy(x => x, new ItemComparer()).ToDictionary(x => x.Key, x => x.Count());
             //now we can print them all out
             PrintOutStuff(sortedbp);
             Console.ReadLine();
         }
-
+        #region Printing
         static void PrintOutStuff(IEnumerable<Item> items)
         {
             //print stuff in this order
@@ -318,7 +333,9 @@ namespace PricerThing
             return attribs;
         }
 
-        #region Reading In Data
+        #endregion
+
+        #region Reading In Data (Schema)
         static Item ReadItem(KeyValue item, Schema schema)
         {
             Item newItem = new Item();
@@ -502,4 +519,9 @@ namespace PricerThing
         }
     }
         #endregion
+
+    #region Reading In Data (bp.tf)
+
+
+    #endregion
 }
