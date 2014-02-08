@@ -15,22 +15,36 @@ namespace TF2TradePriceTool
         private static String BackpackTFAPIKey = null;
         private static String SteamID = "76561198034183306";
 
+        public static String SchemaLocation = "data/schema.txt";
+        public static String PriceLocation = "data/prices.txt";
+        public static String BackpackLocation = "data/items.txt";
+        public static String OutputLocation = "data/output.txt";
+        public static String APIKeyLocation = "data/apikeys.txt";
+
         public static Schema Schema = new Schema();
+        public static PriceSchema PriceSchema = new PriceSchema();
 
         static void Main(String[] args)
         {
 
             //build schema if needed
-            if (!File.Exists("schema.txt"))
+            if (!File.Exists(TF2PricerMain.SchemaLocation))
                 Schema.BuildSchema();
             else
                 Schema.LoadSchema();
+            //build pricelist if needed
+            if (!File.Exists(TF2PricerMain.PriceLocation))
+                PriceSchema.BuildPriceList();
+            else
+                PriceSchema.LoadPriceList();
+
+            //now the backpack
             Backpack backpack = new Backpack();
-            if (!File.Exists("items.txt"))
+            if (!File.Exists(TF2PricerMain.BackpackLocation))
                 backpack.GetContents(SteamID);
             else
             {
-                using (StreamReader reader = new StreamReader("items.txt"))
+                using (StreamReader reader = new StreamReader(TF2PricerMain.BackpackLocation))
                 {
                     //out of date
                     if (reader.ReadLine() != DateTime.Now.Date.ToString())
@@ -39,8 +53,6 @@ namespace TF2TradePriceTool
                         backpack = JsonConvert.DeserializeObject<Backpack>(reader.ReadToEnd());
                 }
             }
-
-            Schema.BuildPriceList();
 
             //test cases
             //fractional, whole, 1 key, 1 key + whole, 1 key + fractional, multiple keys, multiple keys + whole, multiple keys + fractional, 1 buds, 1 buds + fractional
@@ -74,7 +86,7 @@ namespace TF2TradePriceTool
                 //read from the API key file
                 try
                 {
-                    using (StreamReader reader = new StreamReader("data/apikeys.txt"))
+                    using (StreamReader reader = new StreamReader(TF2PricerMain.APIKeyLocation))
                         SteamAPIKey = reader.ReadLine();
                 }
                 catch (Exception e)
@@ -97,7 +109,7 @@ namespace TF2TradePriceTool
             if (BackpackTFAPIKey == null)
             {
                 //read from the API key file
-                using (StreamReader reader = new StreamReader("data/apikeys.txt"))
+                using (StreamReader reader = new StreamReader(TF2PricerMain.APIKeyLocation))
                 {
                     reader.ReadLine();
                     //second line is bp.tf's key

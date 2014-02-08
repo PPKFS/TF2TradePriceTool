@@ -20,16 +20,7 @@ namespace TF2TradePriceTool
         public ItemType Type { get; set; }
     }
 
-    struct ItemPricingTemplate
-    {
-        public int DefIndex { get; set; }
-
-        public Quality Quality { get; set; }
-
-        //we can ignore this for most things, but it's useful to keep in anyway
-        public int Effect { get; set; }
-    }
-
+    
     class Schema
     {
         //schema of items, mapped by index
@@ -50,17 +41,15 @@ namespace TF2TradePriceTool
         //mapping of defindices to their default levels (for vintage weapons)
         public Dictionary<int, int> DefaultVintageLevels = new Dictionary<int, int>();
 
-        public Dictionary<ItemPricingTemplate, Price> PriceList = new Dictionary<ItemPricingTemplate, Price>();
-
         public void LoadSchema()
         {
             String loaded;
-            using (StreamReader reader = new StreamReader("schema.txt"))
+            using (StreamReader reader = new StreamReader(TF2PricerMain.SchemaLocation))
             {
                 loaded = reader.ReadToEnd();
             }
 
-            dynamic anonObject = JsonConvert.DeserializeObject(loaded);
+            dynamic anonObject = JsonConvert.DeserializeObject<Schema>(loaded);
             this.ItemSchema = anonObject.ItemSchema;
             this.UnusualNames = anonObject.UnusualNames;
             this.StrangePartNames = anonObject.StrangePartNames;
@@ -196,8 +185,6 @@ namespace TF2TradePriceTool
             //{0, "AAAANone"}
             };
 
-            BuildPriceList();
-
             //now we can save it to a file
             string json = JsonConvert.SerializeObject(this);
                 /*new
@@ -210,93 +197,9 @@ namespace TF2TradePriceTool
                     DefaultVintageLevels = Schema.DefaultVintageLevels
                 });*/
 
-            using (StreamWriter writer = new StreamWriter("schema.txt"))
+            using (StreamWriter writer = new StreamWriter(TF2PricerMain.SchemaLocation))
                 writer.Write(json);
         }
 
-        public void BuildPriceList()
-        {
-            /*WebRequest request = WebRequest.Create("http://backpack.tf/api/IGetPrices/v3/?format=json&key="+TF2PricerMain.GetBackpackTFKey());
-            WebResponse response = request.GetResponse();
-            Stream data = response.GetResponseStream();*/
-            string returnedJSON = String.Empty;
-            String data = "bptf.txt";
-            using (StreamReader sr = new StreamReader(data))
-            {
-                returnedJSON = sr.ReadToEnd();
-            }
-
-            JObject bptfRaw = JObject.Parse(returnedJSON);
-            JObject itemPriceListRaw = bptfRaw["response"]["prices"].Value<JObject>();
-            foreach (KeyValuePair<String, JToken> itemEntry in itemPriceListRaw)
-            {
-                int defIndex = Convert.ToInt32(itemEntry.Key);
-                foreach(JProperty qualityEntry in itemEntry.Value)
-                {
-                    if (qualityEntry.Name == "alt_defindex") //no idea what the hell this does
-                        continue;
-                    Quality quality = (Quality)Enum.Parse(typeof(Quality), qualityEntry.Name);
-
-                    //now we view each effect. 
-                    //normal stuff appears as 0, some weird stuff like 4 like the sparkle lugers, unusuals have their own ones
-                    foreach(JProperty effectItem in qualityEntry.Value)
-                    {
-                        ItemPricingTemplate priceTemplate = new ItemPricingTemplate();
-                        priceTemplate.DefIndex = defIndex;
-                        priceTemplate.Quality = quality;
-                        priceTemplate.Effect = Convert.ToInt32(effectItem.Name);
-                        Price p = new Price();
-                        double low = effectItem.Value["current"]["value"].Value<double>();
-                        double high = low;
-                        if (effectItem.Value["current"]["value_high"] != null)
-                            high = effectItem.Value["current"]["value_high"].Value<double>();
-
-                        //now convert into ref
-                        String currType = effectItem.Value["current"]["currency"].Value<String>();
-                        switch (currType)
-                        {
-                            case "keys":
-                                p.LowRefinedPrice = low * Price.KeyPrice;
-                                p.HighRefinedPrice = high * Price.KeyPrice;
-                                break;
-                            case "metal":
-                                p.LowRefinedPrice = low;
-                                p.HighRefinedPrice = high;
-                                break;
-                            case "earbuds":
-                                p.LowRefinedPrice = low * Price.KeyPrice * Price.BudsPrice;
-                                p.HighRefinedPrice = low * Price.KeyPrice * Price.BudsPrice;
-                                break;
-                            case "usd": //ignore refined
-                                p.LowRefinedPrice = 1;
-                                p.HighRefinedPrice = 1;
-                                break;
-                            default:
-                                System.Diagnostics.Debugger.Break();
-                                break;
-                        }
-                        PriceList.Add(priceTemplate, p);
-                        //if (!(new List<int>(){ 0, 1, 3, 5, 6, 7, 8, 9, 11, 13, 14, 300, 600, 1100 }.Contains((int)priceTemplate.Quality)))
-                        //    System.Diagnostics.Debugger.Break();
-                        //int lowprice = qualityEntry.Value;
-                    }
-                }
-                //System.Diagnostics.Debugger.Break();
-            }
-            //try struct
-            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
-            /*new
-            {
-                ItemSchema = Schema.ItemSchema,
-                UnusualNames = Schema.UnusualNames,
-                PaintIDs = Schema.PaintIDs,
-                PaintNames = Schema.PaintNames,
-                StrangePartNames = Schema.StrangePartNames,
-                DefaultVintageLevels = Schema.DefaultVintageLevels
-            });*/
-
-            using (StreamWriter writer = new StreamWriter("schema.txt"))
-                writer.Write(json);
-        }
     }
 }
