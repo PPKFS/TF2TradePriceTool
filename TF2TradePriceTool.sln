@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PricerThing", "PricerThing\PricerThing.csproj", "{48A202D3-6165-4851-9365-72727281D267}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TF2TradePriceTool", "TF2TradePriceTool\TF2TradePriceTool.csproj", "{48A202D3-6165-4851-9365-72727281D267}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,8 +16,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

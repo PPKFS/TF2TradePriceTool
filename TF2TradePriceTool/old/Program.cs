@@ -15,7 +15,7 @@ namespace PricerThing
 
         static Dictionary<Item, int> countedBP = new Dictionary<Item, int>();
         static Schema itemSchema = null;
-        static void Main(string[] args)
+        static void OldMain(string[] args)
         {
             Schema schema = GetSchema();
             List<Item> backpack = new List<Item>();
@@ -49,8 +49,8 @@ namespace PricerThing
                 foreach (KeyValue item in items.Children[2].Children)
                 {
                     //read them all in
-                    Item newItem = ReadItem(item, schema);
-                    newItem.StrangeParts.OrderBy(t => t);
+                    Item newItem = new Item();
+
                     backpack.Add(newItem);
                 }
             }
