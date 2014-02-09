@@ -82,6 +82,14 @@ namespace TF2TradePriceTool
 
             }
         }
+        public static Price operator +(Price a, Price b)
+        {
+            return new Price()
+            {
+                LowRefinedPrice = a.LowRefinedPrice + b.LowRefinedPrice,
+                HighRefinedPrice = a.HighRefinedPrice + b.HighRefinedPrice
+            };
+        }
     }
 
     class ItemPricingTemplate
@@ -206,6 +214,16 @@ namespace TF2TradePriceTool
 
             using (StreamWriter writer = new StreamWriter(TF2PricerMain.PriceLocation))
                 writer.Write(json);
+        }
+
+        public Price GetPaintPrice(string p)
+        {
+            Price price;
+            PriceList.TryGetValue(String.Join("|", TF2PricerMain.Schema.PaintIDs[Convert.ToInt32(p)], Quality.Unique, 0), out price);
+            if (price == null)
+                return Price.Unpriced;
+            else
+                return new Price() { LowRefinedPrice = price.LowRefinedPrice / 2, HighRefinedPrice = price.HighRefinedPrice / 2 };
         }
     }
 }

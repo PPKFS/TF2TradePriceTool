@@ -26,7 +26,12 @@ namespace TF2TradePriceTool
 
     abstract class Section
     {
+        //needed sections
+
+
         public Dictionary<Item, int> Items { get; set; }
+
+        public IOrderedEnumerable<Item> OrderedList { get; set; }
 
         public Section()
         {
@@ -37,6 +42,6 @@ namespace TF2TradePriceTool
 
         public abstract void Print(StreamWriter writer);
 
-        public abstract bool TryAdd(Item newItem);
+        public abstract bool TryAdd(Item item);
     }
 }

@@ -63,13 +63,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backpack.cs" />
+    <Compile Include="CraftNumberSection.cs" />
+    <Compile Include="GenuineHatSection.cs" />
+    <Compile Include="GenuineWeaponSection.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Price.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schema.cs" />
     <Compile Include="Section.cs" />
+    <Compile Include="StrangeHatSection.cs" />
+    <Compile Include="StrangeWeaponSection.cs" />
+    <Compile Include="ToolSection.cs" />
+    <Compile Include="UniqueHatSection.cs" />
+    <Compile Include="UniqueWeaponSection.cs" />
     <Compile Include="UnusualSection.cs" />
+    <Compile Include="VintageHatSection.cs" />
+    <Compile Include="VintageWeaponSection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bptf.txt" />

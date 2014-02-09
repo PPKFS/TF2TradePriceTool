@@ -13,7 +13,7 @@ namespace TF2TradePriceTool
     {
         private static String SteamAPIKey = null;
         private static String BackpackTFAPIKey = null;
-        private static String SteamID = "76561198034183306";
+        public static String SteamID = "76561198085492556";//"76561198034183306";
 
         public static String SchemaLocation = "data/schema.txt";
         public static String PriceLocation = "data/prices.txt";
@@ -54,6 +54,7 @@ namespace TF2TradePriceTool
                 }
             }
 
+            backpack.Sort();
             //so now everything is loaded. Hooray!
             //get the backpack to print out everything
             backpack.PrintOutItems();
@@ -133,7 +134,7 @@ namespace TF2TradePriceTool
                 case "2":
                     price = highPrice;
                     break;
-                case "3":
+                default:
                     price = input;
                     break;
                 //price = TF2PricerMain.PriceSchema

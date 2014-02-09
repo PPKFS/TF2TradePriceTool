@@ -18,7 +18,26 @@ namespace TF2TradePriceTool
         public Backpack()
         {
             Sections = new List<Section>();
+            //Vintage Hats
+            //Strange Hats
+            //Unique Hats
+            //Craft Numbers
+            //Strange Weapons
+            //Genuine Weapons
+            //Vintage Weapons
+            //Unique Weapons
+            //Tools
             Sections.Add(new UnusualSection());
+            Sections.Add(new GenuineHatSection());
+            Sections.Add(new VintageHatSection());
+            //Sections.Add(new StrangeHatSection());
+            //Sections.Add(new UniqueHatSection());
+            //Sections.Add(new CraftNumberSection());
+            //Sections.Add(new StrangeWeaponSection());
+            //Sections.Add(new GenuineWeaponSection());
+            //Sections.Add(new VintageWeaponSection());
+            //Sections.Add(new UniqueWeaponSection());
+            //Sections.Add(new ToolSection());
         }
 
         public void GetContents(string steamID)
@@ -27,7 +46,7 @@ namespace TF2TradePriceTool
             using (WebAPI.Interface steamInterface = WebAPI.GetInterface("IEconItems_440", TF2PricerMain.GetSteamAPIKey()))
             {
                 Dictionary<string, string> itemArgs = new Dictionary<string, string>();
-                itemArgs["SteamID"] = "76561198034183306";
+                itemArgs["SteamID"] = TF2PricerMain.SteamID;
                 if (!File.Exists("raw_items.txt"))
                     items = steamInterface.Call("GetPlayerItems", /* version */ 1, itemArgs);
                 else
@@ -64,8 +83,8 @@ namespace TF2TradePriceTool
                     newItem[Item.Quantity] = itemJSON["quantity"].Value;
 
                 //test line TODO remove
-                if (newItem.Quality != Quality.Unusual || newItem.Type != ItemType.Hat)
-                    continue;
+                //if (newItem.Quality != Quality.Unusual || newItem.Type != ItemType.Hat)
+                //    continue;
 
                 //now we can check for various attributes
                 //since some want float value and some want value, it's easiest done as a switch
@@ -127,6 +146,12 @@ namespace TF2TradePriceTool
                     s.Print(writer);
                 }
             }
+        }
+
+        public void Sort()
+        {
+            foreach (Section s in Sections)
+                s.Sort();
         }
 
     }
