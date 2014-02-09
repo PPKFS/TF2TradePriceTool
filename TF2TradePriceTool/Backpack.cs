@@ -51,7 +51,8 @@ namespace TF2TradePriceTool
                 //read in the items. if it's a property every item has, like a level, then it's a property.
                 //if it's a property only some items have, like strange parts or paint, it's an attribute.
                 Item newItem = new Item();
-                newItem.Template = TF2PricerMain.Schema.ItemSchema[Convert.ToInt32(itemJSON["defindex"].Value)];
+                newItem.DefIndex = Convert.ToInt32(itemJSON["defindex"].Value);
+                newItem.Template = TF2PricerMain.Schema.ItemSchema[newItem.DefIndex];
                 newItem.Level = Convert.ToInt32(itemJSON["level"].Value);
                 newItem.Quality = (Quality)Enum.Parse(typeof(Quality), itemJSON["quality"].Value);
                 //if the flag exists and it's not 0 (that is, it's not tradable)
@@ -95,7 +96,7 @@ namespace TF2TradePriceTool
                            newItem[Item.StrangePart3] = attr["float_value"].Value;
                             break;
                         case 134: //unusual
-                            newItem[Item.Effect] = TF2PricerMain.Schema.UnusualNames[Convert.ToInt32(attr["float_value"].Value)];
+                            newItem[Item.Effect] = attr["float_value"].Value;
                             break;
                         case 153: //untradable
                         case 501: //description
@@ -116,5 +117,17 @@ namespace TF2TradePriceTool
             //now we've read in all the items, we sort the sections and then we start printing them
             //the printing is twofold - we print 
         }
+
+        public void PrintOutItems()
+        {
+            using (StreamWriter writer = new StreamWriter(TF2PricerMain.OutputLocation))
+            {
+                foreach (Section s in Sections)
+                {
+                    s.Print(writer);
+                }
+            }
+        }
+
     }
 }

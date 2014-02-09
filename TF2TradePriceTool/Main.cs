@@ -36,7 +36,7 @@ namespace TF2TradePriceTool
             if (!File.Exists(TF2PricerMain.PriceLocation))
                 PriceSchema.BuildPriceList();
             else
-                PriceSchema.LoadPriceList();
+                PriceSchema.BuildPriceList();
 
             //now the backpack
             Backpack backpack = new Backpack();
@@ -54,29 +54,9 @@ namespace TF2TradePriceTool
                 }
             }
 
-            //test cases
-            //fractional, whole, 1 key, 1 key + whole, 1 key + fractional, multiple keys, multiple keys + whole, multiple keys + fractional, 1 buds, 1 buds + fractional
-            Price p1 = new Price();
-            p1.LowRefinedPrice = 5;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 0.33;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 7;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 12;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 15.77;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 35;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 39;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 25.77;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 140;
-            Console.WriteLine(p1.LowPrice);
-            p1.LowRefinedPrice = 178;
-            Console.WriteLine(p1.LowPrice);
+            //so now everything is loaded. Hooray!
+            //get the backpack to print out everything
+            backpack.PrintOutItems();
         }
 
         public static String GetSteamAPIKey()
@@ -125,6 +105,43 @@ namespace TF2TradePriceTool
                 return null;
             else
                 return json[valueToGet].Value;
+        }
+
+        public static String FormatItem(Item item, bool printQuality, int count, params String[] attributes)
+        {
+            Quality quality = item.Quality;
+            String name = item.Name;
+            String qual = (!printQuality) ? "" : quality.ToString();
+            if (attributes.Count() == 0)
+                return String.Join(" ", "*", qual, name, (count != 1) ? "x" + count : "");
+            else
+                return String.Join(" ", "*", qual, name, "(" + String.Join(", ", attributes) + ")", (count != 1) ? "x" + count : "");
+        }
+
+        public static String GetInputPrice(String formattedItem, StreamWriter writer, String lowPrice, String highPrice)
+        {
+            Console.WriteLine("1) Low. 2) High. Other) Custom.");
+            String input = Console.ReadLine();
+            String price = "";
+            switch (input)
+            {
+                case "":
+                    break;
+                case "1":
+                    price = lowPrice;
+                    break;
+                case "2":
+                    price = highPrice;
+                    break;
+                case "3":
+                    price = input;
+                    break;
+                //price = TF2PricerMain.PriceSchema
+            }
+            if (price != "")
+                writer.WriteLine(formattedItem + "- " + price);
+            Console.Clear();
+            return price;
         }
     }
 }

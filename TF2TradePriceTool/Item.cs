@@ -48,7 +48,9 @@ namespace TF2TradePriceTool
         {
             get
             {
-                return attributes[key];
+                String attrib;
+                attributes.TryGetValue(key, out attrib);
+                return attrib;
             }
 
             set
@@ -95,8 +97,25 @@ namespace TF2TradePriceTool
             {
                 String name;
                 attributes.TryGetValue(Item.Paint, out name);
-                return name;
+                if (name == null)
+                    return null;
+                else
+                    return TF2PricerMain.Schema.PaintNames[Convert.ToInt32(name)];
             }
+        }
+
+        public String EffectName
+        {
+            get
+            {
+                String name;
+                attributes.TryGetValue(Item.Effect, out name);
+                if (name == null)
+                    return null;
+                else
+                    return TF2PricerMain.Schema.UnusualNames[Convert.ToInt32(name)];
+            }
+
         }
 
         public Item()
@@ -104,6 +123,39 @@ namespace TF2TradePriceTool
             IsTradable = true;
             IsGifted = false;
             IsCraftable = false;
+        }
+
+        public override int GetHashCode()
+        {
+            return 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Item other = obj as Item;
+            if (other == null)
+                return false;
+            //different items, qualities, tradabilities, craftabilities
+            if (this.DefIndex != other.DefIndex || this.Quality != other.Quality || this.IsTradable != other.IsTradable || this.IsCraftable != other.IsCraftable)
+                return false;
+            else if (this.IsGifted != other.IsGifted || (this.PaintName != other.PaintName && this.Quality != Quality.Unusual)) //gifted, paint (if not unusual)
+                return false;
+            else if (new int[] { 0, 1, 42, 69, 99, 100 }.Contains(this.Level) && this.Quality == Quality.Vintage && this.Level != other.Level) //diff levs if vintage
+                return false;
+            else if (this.Quality == Quality.Vintage && this.Type == ItemType.Weapon && this.Level != other.Level) //odd-levelled vintages
+                return false;
+            //now to check attributes
+            foreach (KeyValuePair<int, String> kv in this.attributes)
+            {
+                if (kv.Key == Item.CustomName)
+                    continue;
+                //if the other one doesn't have this key
+                if (other[kv.Key] == null)
+                    return false; //if the other one has a different value
+                else if (other[kv.Key] != kv.Value)
+                    return false;
+            }
+            return true; //then it's the same
         }
     }
 }

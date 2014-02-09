@@ -13,7 +13,8 @@ namespace TF2TradePriceTool
     {
         //can't be bothered to get this sorted neatly
         public static double KeyPrice = 7.00;
-        public static double BudsPrice = 20.00;
+        public static double BudsPrice = 19.50;
+        public static double RefPrice = 0.295; //it makes it work nicely, okay?
 
         public static Price Unpriced = new Price() { LowRefinedPrice = 0, HighRefinedPrice = 0 };
 
@@ -23,7 +24,10 @@ namespace TF2TradePriceTool
 
         public override string ToString()
         {
-            return LowPrice + " - " + HighPrice;
+            if (LowPrice == HighPrice)
+                return LowPrice;
+            else
+                return LowPrice + " - " + HighPrice;
         }
 
         public String LowPrice
@@ -36,20 +40,19 @@ namespace TF2TradePriceTool
                 if (LowRefinedPrice == 0)
                     return "No price";
                 if (LowRefinedPrice < KeyPrice)
-                    return LowRefinedPrice + " ref";
+                    return Math.Round(LowRefinedPrice, 2) + " ref";
                 else if (LowRefinedPrice == KeyPrice)
                     return "1 key";
                 else if (LowRefinedPrice < 2 * KeyPrice)
                 {
-                    return "1 key + " + (LowRefinedPrice % KeyPrice) + " ref";
+                    return "1 key + " + Math.Round((LowRefinedPrice % KeyPrice), 2) + " ref";
                 }
                 else if (LowRefinedPrice < BudsPrice * KeyPrice)
                 {
-                    return Math.Truncate(LowRefinedPrice / KeyPrice) + " keys + " + (LowRefinedPrice % KeyPrice) + " ref";
+                    return Math.Truncate(LowRefinedPrice / KeyPrice) + " keys + " + Math.Round((LowRefinedPrice % KeyPrice), 2) + " ref";
                 }
                 else
-                    return Math.Round(LowRefinedPrice / (BudsPrice * KeyPrice), 2) + " buds";
-
+                    return Math.Round(LowRefinedPrice / (BudsPrice * KeyPrice), 1) + " buds";
             }
         }
 
@@ -63,19 +66,19 @@ namespace TF2TradePriceTool
                 if (LowRefinedPrice == 0)
                     return "No price";
                 if (HighRefinedPrice < KeyPrice)
-                    return HighRefinedPrice + " ref";
+                    return Math.Round(HighRefinedPrice, 2) + " ref";
                 else if (HighRefinedPrice == KeyPrice)
                     return "1 key";
                 else if (HighRefinedPrice < 2 * KeyPrice)
                 {
-                    return "1 key + " + (HighRefinedPrice % KeyPrice) + " ref";
+                    return "1 key + " + Math.Round((HighRefinedPrice % KeyPrice), 2) + " ref";
                 }
                 else if (HighRefinedPrice < BudsPrice * KeyPrice)
                 {
-                    return Math.Truncate(HighRefinedPrice / KeyPrice) + " keys + " + (HighRefinedPrice % KeyPrice) + " ref";
+                    return Math.Truncate(HighRefinedPrice / KeyPrice) + " keys + " + Math.Round((HighRefinedPrice % KeyPrice), 2) + " ref";
                 }
                 else
-                    return Math.Round(HighRefinedPrice / (BudsPrice * KeyPrice), 2) + " buds";
+                    return Math.Round(HighRefinedPrice / (BudsPrice * KeyPrice), 1) + " buds";
 
             }
         }
@@ -116,6 +119,11 @@ namespace TF2TradePriceTool
             Price price;
             PriceList.TryGetValue(String.Join("|", defindex, quality, effect), out price);
             return (price == null) ? Price.Unpriced : price;
+        }
+
+        public Price GetPrice(Item i)
+        {
+            return GetPrice(i.DefIndex, i.Quality, Convert.ToInt32(i[Item.Effect]));
         }
 
         public void BuildPriceList()
@@ -169,11 +177,11 @@ namespace TF2TradePriceTool
                                 break;
                             case "earbuds":
                                 p.LowRefinedPrice = low * Price.KeyPrice * Price.BudsPrice;
-                                p.HighRefinedPrice = low * Price.KeyPrice * Price.BudsPrice;
+                                p.HighRefinedPrice = high * Price.KeyPrice * Price.BudsPrice;
                                 break;
-                            case "usd": //ignore refined
-                                p.LowRefinedPrice = 1;
-                                p.HighRefinedPrice = 1;
+                            case "usd": //seems to be both unusuals and refined
+                                p.LowRefinedPrice = low / Price.RefPrice;
+                                p.HighRefinedPrice = high / Price.RefPrice;
                                 break;
                             default:
                                 System.Diagnostics.Debugger.Break();

@@ -179,22 +179,8 @@ namespace PricerThing
         {
             Item a = this;
             Item other = (Item)obj;
-            if (a.DefIndex != other.DefIndex || a.Quality != other.Quality || a.ContainedItem != other.ContainedItem || a.IsTradable != other.IsTradable)
-                return false;
-            else if (a.PaintDefID != other.PaintDefID && a.Quality != Quality.Unusual) //or if they are painted differently (except unusuals, then we don't care)
-                return false;
-            else if (a.CraftNumber != other.CraftNumber || a.IsCraftable != other.IsCraftable || a.IsGifted != other.IsGifted || a.Effect != other.Effect)
-                return false;
-            else if (new int[] { 0, 1, 42, 69, 99, 100 }.Contains(a.Level) && a.Quality == Quality.Vintage && a.Level != other.Level) //diff levs if vintage
-                return false;
-            else if (a.Quality == Quality.Vintage && a.Type == ItemType.Weapon && a.Level != other.Level) //odd-levelled vintages
-                return false;
-            else if (a.Quality == Quality.Strange && !Enumerable.SequenceEqual(a.StrangeParts.OrderBy(t => t), other.StrangeParts.OrderBy(t => t))) //diff parts
-                return false;
-            else if (a.Type == ItemType.Tool && a.Quantity != other.Quantity) //dueling games, noisemakers
-                return false;
-            else
-                return true; //they're basically the same
+            return true;
+            
         }
 
         public override int GetHashCode()
