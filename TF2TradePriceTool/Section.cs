@@ -14,6 +14,12 @@ namespace TF2TradePriceTool
                 list.Add(item);
         }
 
+        public static void AddRangeIfNotNull<T>(this List<T> list, IEnumerable<T> items)
+        {
+            if (items != null)
+                list.AddRange(items);
+        }
+
         public static void AddCounted<T>(this Dictionary<T, int> dict, T item)
         {
             int currentCount;

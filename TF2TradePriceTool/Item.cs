@@ -43,6 +43,8 @@ namespace TF2TradePriceTool
         public static int StrangePart2 = 7;
         public static int StrangePart3 = 8;
 
+        public static List<String> OnlyUncraftList = new List<string>() { "Alien Swarm Parasite" };
+
         [IndexerName("Attributes")]
         public String this[int key]
         {
@@ -118,11 +120,29 @@ namespace TF2TradePriceTool
 
         }
 
+        public List<String> StrangeParts
+        {
+            get
+            {
+                List<String> returnedParts = new List<string>();
+                String[] parts = new String[3];
+                attributes.TryGetValue(Item.StrangePart1, out parts[0]);
+                attributes.TryGetValue(Item.StrangePart2, out parts[1]);
+                attributes.TryGetValue(Item.StrangePart3, out parts[2]);
+                foreach (String s in parts)
+                {
+                    if (s != null)
+                        returnedParts.Add(s);
+                }
+                return (returnedParts.Count == 0) ? null : returnedParts;
+            }
+        }
+
         public Item()
         {
             IsTradable = true;
             IsGifted = false;
-            IsCraftable = false;
+            IsCraftable = true;
         }
 
         public override int GetHashCode()

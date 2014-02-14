@@ -27,9 +27,9 @@ namespace TF2TradePriceTool
             //Vintage Weapons
             //Unique Weapons
             //Tools
-            Sections.Add(new UnusualSection());
-            Sections.Add(new GenuineHatSection());
-            Sections.Add(new VintageHatSection());
+            //Sections.Add(new UnusualSection());
+            //Sections.Add(new GenuineHatSection());
+            //Sections.Add(new VintageHatSection());
             //Sections.Add(new StrangeHatSection());
             //Sections.Add(new UniqueHatSection());
             //Sections.Add(new CraftNumberSection());
@@ -37,7 +37,7 @@ namespace TF2TradePriceTool
             //Sections.Add(new GenuineWeaponSection());
             //Sections.Add(new VintageWeaponSection());
             //Sections.Add(new UniqueWeaponSection());
-            //Sections.Add(new ToolSection());
+            Sections.Add(new ToolSection());
         }
 
         public void GetContents(string steamID)
@@ -58,11 +58,11 @@ namespace TF2TradePriceTool
                     }
                 }
                 //this is just for reference..
-                /*string serialized = JsonConvert.SerializeObject(items, Formatting.Indented);
+                string serialized = JsonConvert.SerializeObject(items, Formatting.Indented);
                 using (StreamWriter writer = new StreamWriter("raw_items.txt"))
                 {
                     writer.Write(serialized);
-                }*/
+                }
             }
 
             foreach (KeyValue itemJSON in items["items"].Children)
@@ -83,7 +83,8 @@ namespace TF2TradePriceTool
                     newItem[Item.Quantity] = itemJSON["quantity"].Value;
 
                 //test line TODO remove
-                //if (newItem.Quality != Quality.Unusual || newItem.Type != ItemType.Hat)
+                if (newItem.Name.Contains("sight"))
+                    System.Diagnostics.Debugger.Break();
                 //    continue;
 
                 //now we can check for various attributes
@@ -127,7 +128,6 @@ namespace TF2TradePriceTool
 
                 foreach (Section section in Sections)
                 {
-                    Quality q = (Quality)500;
                     //try to add the item to that section of the backpack
                     if (section.TryAdd(newItem))
                         break;
@@ -143,7 +143,8 @@ namespace TF2TradePriceTool
             {
                 foreach (Section s in Sections)
                 {
-                    s.Print(writer);
+                    if(s.OrderedList.Count() != 0)
+                        s.Print(writer);
                 }
             }
         }

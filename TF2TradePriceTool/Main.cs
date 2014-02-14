@@ -13,7 +13,7 @@ namespace TF2TradePriceTool
     {
         private static String SteamAPIKey = null;
         private static String BackpackTFAPIKey = null;
-        public static String SteamID = "76561198085492556";//"76561198034183306";
+        public static String SteamID = /*"76561198085492556";//*/"76561198034183306";
 
         public static String SchemaLocation = "data/schema.txt";
         public static String PriceLocation = "data/prices.txt";
@@ -31,7 +31,7 @@ namespace TF2TradePriceTool
             if (!File.Exists(TF2PricerMain.SchemaLocation))
                 Schema.BuildSchema();
             else
-                Schema.LoadSchema();
+                Schema./*BuildSchema();//*/LoadSchema();
             //build pricelist if needed
             if (!File.Exists(TF2PricerMain.PriceLocation))
                 PriceSchema.BuildPriceList();
@@ -111,8 +111,10 @@ namespace TF2TradePriceTool
         public static String FormatItem(Item item, bool printQuality, int count, params String[] attributes)
         {
             Quality quality = item.Quality;
-            String name = item.Name;
+            String name = (item[Item.CraftNumber] != null && Convert.ToInt32(item[Item.CraftNumber]) <= 100) ? item.Name + " #" + item[Item.CraftNumber] : item.Name;
             String qual = (!printQuality) ? "" : quality.ToString();
+            if(!printQuality && quality != Quality.Unique)
+                qual = quality.ToString();
             if (attributes.Count() == 0)
                 return String.Join(" ", "*", qual, name, (count != 1) ? "x" + count : "");
             else
@@ -134,12 +136,17 @@ namespace TF2TradePriceTool
                 case "2":
                     price = highPrice;
                     break;
+                case "3":
+                    price = ".";
+                    break;
                 default:
                     price = input;
                     break;
                 //price = TF2PricerMain.PriceSchema
             }
-            if (price != "")
+            if(price == ".")
+                writer.WriteLine(formattedItem); //i.e. don't list a price at all, for bulk stuff
+            else if (price != "")
                 writer.WriteLine(formattedItem + "- " + price);
             Console.Clear();
             return price;

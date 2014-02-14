@@ -18,12 +18,17 @@ namespace TF2TradePriceTool
 
         public static Price Unpriced = new Price() { LowRefinedPrice = 0, HighRefinedPrice = 0 };
 
+        //a hack, but if you want no price then you can enter a negative
+        public static Price NoPrice = new Price() { LowRefinedPrice = -1, HighRefinedPrice = -1 };
+
         public double LowRefinedPrice { get; set; } //the price in refined
 
         public double HighRefinedPrice { get; set; }
 
         public override string ToString()
         {
+            if (LowRefinedPrice < 0)
+                return "";
             if (LowPrice == HighPrice)
                 return LowPrice;
             else
@@ -131,7 +136,22 @@ namespace TF2TradePriceTool
 
         public Price GetPrice(Item i)
         {
-            return GetPrice(i.DefIndex, i.Quality, Convert.ToInt32(i[Item.Effect]));
+            if (i.IsCraftable)
+                return GetPrice(i.DefIndex, i.Quality, Convert.ToInt32(i[Item.Effect]));
+            else
+            {
+                switch (i.Quality)
+                {
+                    case Quality.Strange:
+                        return GetPrice(i.DefIndex, Quality.UncraftableStrange, 0);
+                        break;
+                    case Quality.Vintage:
+                        return GetPrice(i.DefIndex, Quality.UncraftableVintage, 0);
+                        break;
+                    default: //normal uncraft
+                        return GetPrice(i.DefIndex, Quality.Uncraftable, 0);
+                }
+            }
         }
 
         public void BuildPriceList()
@@ -220,6 +240,18 @@ namespace TF2TradePriceTool
         {
             Price price;
             PriceList.TryGetValue(String.Join("|", TF2PricerMain.Schema.PaintIDs[Convert.ToInt32(p)], Quality.Unique, 0), out price);
+            if (price == null)
+                return Price.Unpriced;
+            else
+                return new Price() { LowRefinedPrice = price.LowRefinedPrice / 2, HighRefinedPrice = price.HighRefinedPrice / 2 };
+        }
+
+        public Price GetPartPrice(string p)
+        {
+            Price price;
+            if (p == null)
+                return Price.Unpriced;
+            PriceList.TryGetValue(String.Join("|", TF2PricerMain.Schema.StrangePartIDs[Convert.ToInt32(p)], Quality.Unique, 0), out price);
             if (price == null)
                 return Price.Unpriced;
             else

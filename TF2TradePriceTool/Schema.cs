@@ -32,6 +32,9 @@ namespace TF2TradePriceTool
         //mapping of strange part ID (kill eater) to their names
         public Dictionary<int, String> StrangePartNames = new Dictionary<int, String>();
 
+        //maps s part ID to their defindices
+        public Dictionary<int, int> StrangePartIDs = new Dictionary<int, int>();
+
         //mapping of paint colours (some form of hex code) to their defindices
         public Dictionary<int, int> PaintIDs = new Dictionary<int,int>();
 
@@ -55,6 +58,7 @@ namespace TF2TradePriceTool
             this.StrangePartNames = anonObject.StrangePartNames;
             this.PaintIDs = anonObject.PaintIDs;
             this.PaintNames = anonObject.PaintNames;
+            this.StrangePartIDs = anonObject.StrangePartIDs;
             this.DefaultVintageLevels = anonObject.DefaultVintageLevels;
         }
 
@@ -103,7 +107,10 @@ namespace TF2TradePriceTool
 
                     //now we parse for strange parts
                     if (template.Name.Contains("Strange Part:"))
-                        StrangePartNames.Add(Convert.ToInt32(item["attributes"].Children[0]["value"].Value), template.Name.Substring(template.Name.IndexOf(':')+2));
+                    {
+                        StrangePartNames.Add(Convert.ToInt32(item["attributes"].Children[0]["value"].Value), template.Name.Substring(template.Name.IndexOf(':') + 2));
+                        StrangePartIDs.Add(Convert.ToInt32(item["attributes"].Children[0]["value"].Value), Convert.ToInt32(defIndex));
+                    }
 
                     ItemSchema.Add(defIndex, template);
                 }
@@ -200,6 +207,5 @@ namespace TF2TradePriceTool
             using (StreamWriter writer = new StreamWriter(TF2PricerMain.SchemaLocation))
                 writer.Write(json);
         }
-
     }
 }
