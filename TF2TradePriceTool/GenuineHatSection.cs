@@ -15,8 +15,7 @@ namespace TF2TradePriceTool
 
         public override void Print(System.IO.StreamWriter writer)
         {
-            writer.WriteLine("**Genuine Hats**\n\n");
-            Console.WriteLine("Genuines\n\n");
+            Section.WriteTitle(writer, "Genuine Hats");
             int cnt = 0;
             foreach (Item i in OrderedList)
             {

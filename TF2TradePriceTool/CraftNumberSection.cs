@@ -14,8 +14,7 @@ namespace TF2TradePriceTool
 
         public override void Print(System.IO.StreamWriter writer)
         {
-            writer.WriteLine("**Craft Numbers**\n\n");
-            Console.WriteLine("# Numbers\n\n");
+            Section.WriteTitle(writer, "Craft Numbers");
             int cnt = 0;
             foreach (Item i in OrderedList)
             {

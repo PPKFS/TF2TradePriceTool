@@ -16,8 +16,7 @@ namespace TF2TradePriceTool
 
         public override void Print(StreamWriter writer)
         {
-            writer.WriteLine("**Unusual Hats**\n\n");
-            Console.WriteLine("Unusuals\n\n");
+            Section.WriteTitle(writer, "Unusuals", "Effect");
             int cnt = 0;
             foreach (Item i in OrderedList)
             {
@@ -25,7 +24,7 @@ namespace TF2TradePriceTool
                 Console.WriteLine("Progress: Item {0} of {1} ("+percent+"%)", cnt+1, Items.Keys.Count);
                 List<String> attribs = new List<string>();
                 attribs.Add(i.EffectName);
-                attribs.AddIfNotNull(i.PaintName);
+                //attribs.AddIfNotNull(i.PaintName);
                 if (i.IsGifted)
                     attribs.Add("Gifted");
                 //pretty print the item

@@ -49,5 +49,12 @@ namespace TF2TradePriceTool
         public abstract void Print(StreamWriter writer);
 
         public abstract bool TryAdd(Item item);
+
+        public static void WriteTitle(StreamWriter writer, string title, string middle="Special")
+        {
+            writer.WriteLine("**"+title+"**\n");
+            writer.WriteLine("Item|{0}|Price",middle);
+            writer.WriteLine(":---|:---|:---");
+        }
     }
 }

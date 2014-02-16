@@ -27,16 +27,16 @@ namespace TF2TradePriceTool
             //Vintage Weapons
             //Unique Weapons
             //Tools
-            //Sections.Add(new UnusualSection());
-            //Sections.Add(new GenuineHatSection());
-            //Sections.Add(new VintageHatSection());
-            //Sections.Add(new StrangeHatSection());
-            //Sections.Add(new UniqueHatSection());
-            //Sections.Add(new CraftNumberSection());
-            //Sections.Add(new StrangeWeaponSection());
-            //Sections.Add(new GenuineWeaponSection());
-            //Sections.Add(new VintageWeaponSection());
-            //Sections.Add(new UniqueWeaponSection());
+            Sections.Add(new UnusualSection());
+            Sections.Add(new GenuineHatSection());
+            Sections.Add(new VintageHatSection());
+            Sections.Add(new StrangeHatSection());
+            Sections.Add(new UniqueHatSection());
+            Sections.Add(new CraftNumberSection());
+            Sections.Add(new StrangeWeaponSection());
+            Sections.Add(new GenuineWeaponSection());
+            Sections.Add(new VintageWeaponSection());
+            Sections.Add(new UniqueWeaponSection());
             Sections.Add(new ToolSection());
         }
 

@@ -15,15 +15,15 @@ namespace TF2TradePriceTool
 
         public override void Print(System.IO.StreamWriter writer)
         {
-            writer.WriteLine("**Strange Weapons**\n\n");
-            Console.WriteLine("Strange Weps\n\n");
+            Section.WriteTitle(writer, "Strange Weapons", "Parts");
             int cnt = 0;
             foreach (Item i in OrderedList)
             {
                 double percent = Math.Round(((double)cnt) * 100 / ((double)Items.Keys.Count));
                 Console.WriteLine("Progress: Item {0} of {1} (" + percent + "%)", cnt + 1, Items.Keys.Count);
                 List<String> attribs = new List<string>();
-                attribs.AddRangeIfNotNull(i.StrangeParts.Select(t => TF2PricerMain.Schema.StrangePartNames[Convert.ToInt32(t)]));
+                if(i.StrangeParts != null)
+                    attribs.AddRangeIfNotNull(i.StrangeParts.Select(t => TF2PricerMain.Schema.StrangePartNames[Convert.ToInt32(t)]));
                 if (i.IsGifted)
                     attribs.Add("Gifted");
                 //pretty print the item

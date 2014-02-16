@@ -111,19 +111,23 @@ namespace TF2TradePriceTool
         public static String FormatItem(Item item, bool printQuality, int count, params String[] attributes)
         {
             Quality quality = item.Quality;
-            String name = (item[Item.CraftNumber] != null && Convert.ToInt32(item[Item.CraftNumber]) <= 100) ? item.Name + " #" + item[Item.CraftNumber] : item.Name;
-            String qual = (!printQuality) ? "" : quality.ToString();
-            if(!printQuality && quality != Quality.Unique)
-                qual = quality.ToString();
+            String qual = (!printQuality && quality == Quality.Unique) ? "" : quality.ToString();
+            String name = qual +" "+ ((item[Item.CraftNumber] != null && Convert.ToInt32(item[Item.CraftNumber]) <= 100) ? item.Name + " #" + item[Item.CraftNumber] : item.Name);
             if (attributes.Count() == 0)
-                return String.Join(" ", "*", qual, name, (count != 1) ? "x" + count : "");
+            {
+                //return String.Join(" ", "*", qual, name, (count != 1) ? "x" + count : "");
+                return name + ((count != 1) ? " x " + count : "")+"|";
+            }
             else
-                return String.Join(" ", "*", qual, name, "(" + String.Join(", ", attributes) + ")", (count != 1) ? "x" + count : "");
+            {
+                return name + ((count != 1) ? " x " + count : "") + "|" + String.Join(", ", attributes);
+                //return String.Join(" ", "*", qual, name, "(" + String.Join(", ", attributes) + ")", (count != 1) ? "x" + count : "");
+            }
         }
 
         public static String GetInputPrice(String formattedItem, StreamWriter writer, String lowPrice, String highPrice)
         {
-            Console.WriteLine("1) Low. 2) High. Other) Custom.");
+            Console.WriteLine("1) Low. 2) High. 3) blank. Other) Custom.");
             String input = Console.ReadLine();
             String price = "";
             switch (input)
@@ -145,9 +149,10 @@ namespace TF2TradePriceTool
                 //price = TF2PricerMain.PriceSchema
             }
             if(price == ".")
-                writer.WriteLine(formattedItem); //i.e. don't list a price at all, for bulk stuff
+                writer.WriteLine(formattedItem+"|"); //i.e. don't list a price at all, for bulk stuff
             else if (price != "")
-                writer.WriteLine(formattedItem + "- " + price);
+                writer.WriteLine(formattedItem + "|" + price);
+            writer.Flush();
             Console.Clear();
             return price;
         }
